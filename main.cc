@@ -44,7 +44,7 @@ public:
 		return ' ';
 	}
 
-	inline int findOperator(std::string s, int& opPos) {
+	inline std::string findOperator(std::string s, int& opPos) {
 		std::strVector operators = { "&", "|", "^", "~", "->", "<->", };
 		for (std::string op : operators) {
 			opPos = s.find(op);
