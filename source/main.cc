@@ -44,6 +44,17 @@ public:
 		return ' ';
 	}
 
+	inline int findOperator(std::string s, int& opPos) {
+		std::strVector operators = { "&", "|", "^", "~", "->", "<->", };
+		for (std::string op : operators) {
+			opPos = s.find(op);
+			if (opPos != std::string::npos) {
+				return s.substr(opPos, op.length());
+			}
+		}
+		return " ";
+	}
+
 	inline std::string computeExpression(parseNode pNode) {
 		std::string evaluated;
 		std::strVector Namespace = nameLookup(pNode.value);
@@ -58,26 +69,22 @@ public:
 				ps = s.find(nm);
 				s.replace(ps, nm.size(), std::to_string((n & (1 << getShift(nm, Namespace))) != 0 ? 1 : 0));
 			}
-			int opp = 0;
-			for (char c : s) {
-				int lhs = 0, rhs = 0;
-				char op = isOperator(c);
-				if (op != ' ') {
-					lhs = std::stoi(s.substr(1, opp-1));
-					rhs = std::stoi(s.substr(opp+1, s.length()-1));
-					switch(op) {
-						case '&': evaluated += std::to_string(lhs & rhs); break;
-						case '|': evaluated += std::to_string(lhs | rhs); break;
-						case '^': evaluated += std::to_string(lhs ^ rhs); break;
-						case 'y': evaluated += std::to_string(lhs & rhs); break;
-						case 'o': evaluated += std::to_string(lhs | rhs); break;
-					}
+			int lhs = 0, rhs = 0, opp = 0;
+			std::string op = findOperator(s, opp);
+			if (op != " ") {
+				lhs = std::stoi(s.substr(1, opp-1));
+				rhs = std::stoi(s.substr(opp+1, s.length()-1));
+				switch(op) {
+					case "&"  : evaluated += std::to_string(lhs & rhs); break;
+					case "|"  : evaluated += std::to_string(lhs | rhs); break;
+					case "^"  : evaluated += std::to_string(lhs ^ rhs); break;
+					case "->" : evaluated += std::to_string(imp(lhs, rhs)); break;
+					case "<->": evaluated += std::to_string(not(lhs ^ rhs)); break;
 				}
-				++opp;
 			}
-			++n;
+		++n;
 		}
-		return evaluated;
+	return evaluated;
 	}
 
 	inline parseNode getInnermostCode() {
