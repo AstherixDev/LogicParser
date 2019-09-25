@@ -70,7 +70,6 @@ public:
 				s.replace(ps, nm.size(), std::to_string((n & (1 << getShift(nm, Namespace))) != 0 ? 1 : 0));
 			}
 			int lhs = 0, rhs = 0, opp = 0;
-			std::cout << "Hello!"
 			std::string op = findOperator(s, opp);
 			if (op != " ") {
 				lhs = std::stoi(s.substr(1, opp-1));
@@ -83,11 +82,9 @@ public:
 					case "<->": evaluated += std::to_string(not(lhs ^ rhs)); break;
 				}
 			}
-			++opp;
-			}
-			++n;
+		++n;
 		}
-		return evaluated;
+	return evaluated;
 	}
 
 	inline parseNode getInnermostCode() {
